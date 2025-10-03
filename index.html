@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sandeva - Payment</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    canvas#galaxyBackground {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    header {
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.6);
+      border-bottom: 2px solid #6e00ff;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin: 0;
+      background: linear-gradient(90deg, #6e00ff, #c084fc, #00eaff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 25px #6e00ff;
+    }
+
+    .logo-store {
+      margin: 0 auto 15px auto;
+      width: 120px;
+      border-radius: 12px;
+      display: block;
+      box-shadow: 0 0 20px rgba(110,0,255,0.7);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .payment-container {
+      width: 100%;
+      max-width: 650px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(110, 0, 255, 0.9);
+      animation: fadeIn 1s ease-in-out;
+      text-align: center;
+    }
+
+    .payment-container h2 {
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, #ff00aa, #6e00ff, #00eaff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px #a855f7;
+    }
+
+    select, button {
+      display: block;
+      margin: 12px auto;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    select {
+      background: #1a1a2e;
+      color: #fff;
+      border: 1px solid #6e00ff;
+    }
+
+    button {
+      background: linear-gradient(90deg, #6e00ff, #c084fc);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #c084fc;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 1rem;
+      word-wrap: break-word;
+      text-align: center;
+      box-shadow: inset 0 0 15px rgba(110, 0, 255, 0.5);
+      background: linear-gradient(90deg, rgba(110,0,255,0.2), rgba(0,234,255,0.2));
+      min-height: 60px;
+    }
+
+    .atas-nama-box {
+      margin-top: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #ccc;
+      font-style: italic;
+      box-shadow: inset 0 0 8px rgba(110,0,255,0.6);
+    }
+
+    .copy-btn, .download-btn {
+      margin-top: 10px;
+      background: linear-gradient(90deg, #ff00aa, #6e00ff);
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .copy-btn:hover, .download-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #ff00ff;
+    }
+
+    footer {
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.6);
+      border-top: 2px solid #6e00ff;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.5rem; }
+      .payment-container h2 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="galaxyBackground"></canvas>
+
+  <header>
+    <h1 id="titleText"></h1>
+  </header>
+
+  <main>
+    <div class="payment-container">
+      <!-- Logo video di atas teks -->
+      <video autoplay muted loop playsinline class="logo-store">
+        <source src="https://files.catbox.moe/e8m5q9.mp4" type="video/mp4">
+      </video>
+      <h2 id="subtitleText"></h2>
+      <select id="paymentSelect" onchange="showPayment()">
+        <option value="" disabled selected>Pilih Payment</option>
+        <option value="Dana : 081342074706 : HAJARIA">Dana</option>
+        <option value="Ovo : 081342074706 : HAJARIA">Ovo</option>
+        <option value="Gopay : 081342074706 : HAJARIA">Gopay</option>
+        <option value="ShopeePay : 081342074706 : Munadlil Akram Sahril">ShopeePay</option>
+        <option value="SeaBank : 901181634455 : Munadlil Akram Sahril">SeaBank</option>
+        <option value="Qris">Qris</option>
+      </select>
+      <div class="result" id="result">Silakan pilih metode pembayaran di atas.</div>
+      <div id="extraButtons"></div>
+    </div>
+  </main>
+
+  <footer>
+    <span id="footerText"></span>
+  </footer>
+
+  <script>
+    // Animasi mengetik
+    function typeText(elementId, text, speed=80) {
+      let i = 0;
+      function typing() {
+        if (i < text.length) {
+          document.getElementById(elementId).innerHTML += text.charAt(i);
+          i++;
+          setTimeout(typing, speed);
+        }
+      }
+      typing();
+    }
+
+    window.onload = () => {
+      typeText("titleText", "SANDEVA DIGITAL STORE PAYMENT", 70);
+      setTimeout(() => typeText("subtitleText", "PILIH METHODE PEMBAYARAN ANDA", 60), 1200);
+      setTimeout(() => typeText("footerText", "© 2025 Sandeva Payment. Semua Hak Dilindungi.", 40), 2500);
+    }
+
+    function showPayment() {
+      const select = document.getElementById('paymentSelect');
+      const result = document.getElementById('result');
+      const extra = document.getElementById('extraButtons');
+      let value = select.value;
+
+      extra.innerHTML = "";
+
+      if (value === "Qris") {
+        result.innerHTML = "<strong>Qris</strong><br><img src='https://files.catbox.moe/kskyoc.png' alt='QRIS' style='margin-top:10px;border-radius:10px;width:200px;'>";
+        extra.innerHTML = `<button class='download-btn' onclick="downloadQR()">📥 Download QRIS</button>`;
+      } else if (value) {
+        const parts = value.split(":");
+        let method = parts[0].trim();
+        let number = parts[1].trim();
+        let atasNama = parts[2].trim();
+        result.innerHTML = `<strong>${method}</strong><br>${number}<div class='atas-nama-box'>a.n ${atasNama}</div>`;
+        extra.innerHTML = `<button class='copy-btn' onclick="copyText('${number}')">📋 Salin Nomor</button>`;
+      } else {
+        result.innerHTML = "Silakan pilih metode pembayaran di atas.";
+      }
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Nomor tersalin: " + text);
+      });
+    }
+
+    function downloadQR() {
+      const link = document.createElement('a');
+      link.href = 'https://files.catbox.moe/kskyoc.png';
+      link.download = 'qris.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Background Galaxy
+    const canvas = document.getElementById("galaxyBackground");
+    const ctx = canvas.getContext("2d");
+
+    let stars = [], nebulas = [], planets = [], comets = [];
+    const numStars = 1000, numNebulas = 4, numPlanets = 3, numComets = 2;
+
+    function randomColor() {
+      const colors = ["#6e00ff", "#c084fc", "#00eaff", "#ff00aa", "#ffaa00", "#ffffff"];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.2,
+          color: randomColor(),
+          speed: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    function initNebulas() {
+      nebulas = [];
+      for (let i = 0; i < numNebulas; i++) {
+        nebulas.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 250 + 200,
+          color: randomColor(),
+          alpha: 0.15 + Math.random() * 0.25
+        });
+      }
+    }
+
+    function initPlanets() {
+      planets = [];
+      for (let i = 0; i < numPlanets; i++) {
+        planets.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 60 + 40,
+          color: randomColor(),
+          dx: (Math.random() - 0.5) * 0.4,
+          dy: (Math.random() - 0.5) * 0.4
+        });
+      }
+    }
+
+    function initComets() {
+      comets = [];
+      for (let i = 0; i < numComets; i++) {
+        comets.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          dx: -(Math.random() * 2 + 1),
+          dy: (Math.random() * 1 - 0.5),
+          length: Math.random() * 80 + 50,
+          color: "#ffffff"
+        });
+      }
+    }
+
+    function drawNebulas() {
+      for (let nebula of nebulas) {
+        let gradient = ctx.createRadialGradient(nebula.x, nebula.y, 0, nebula.x, nebula.y, nebula.radius);
+        gradient.addColorStop(0, nebula.color);
+        gradient.addColorStop(1, "transparent");
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = nebula.alpha;
+        ctx.beginPath();
+        ctx.arc(nebula.x, nebula.y, nebula.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function drawStars() {
+      for (let star of stars) {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = star.color;
+        ctx.shadowColor = star.color;
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > canvas.height) {
+          star.y = 0;
+          star.x = Math.random() * canvas.width;
+        }
+      }
+    }
+
+    function drawPlanets() {
+      for (let planet of planets) {
+        let gradient = ctx.createRadialGradient(
+          planet.x - planet.radius / 3,
+          planet.y - planet.radius / 3,
+          planet.radius / 6,
+          planet.x,
+          planet.y,
+          planet.radius
+        );
+        gradient.addColorStop(0, "#fff");
+        gradient.addColorStop(0.3, planet.color);
+        gradient.addColorStop(1, "#000");
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(planet.x, planet.y, planet.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        planet.x += planet.dx;
+        planet.y += planet.dy;
+
+        if (planet.x - planet.radius < 0 || planet.x + planet.radius > canvas.width) planet.dx *= -1;
+        if (planet.y - planet.radius < 0 || planet.y + planet.radius > canvas.height) planet.dy *= -1;
+      }
+    }
+
+    function drawComets() {
+      for (let comet of comets) {
+        ctx.beginPath();
+        let gradient = ctx.createLinearGradient(comet.x, comet.y, comet.x + comet.length, comet.y + comet.length / 2);
+        gradient.addColorStop(0, comet.color);
+        gradient.addColorStop(1, "transparent");
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 2;
+        ctx.moveTo(comet.x, comet.y);
+        ctx.lineTo(comet.x + comet.length, comet.y + comet.length / 2);
+        ctx.stroke();
+
+        comet.x += comet.dx;
+        comet.y += comet.dy;
+
+        if (comet.x + comet.length < 0 || comet.y > canvas.height || comet.y < 0) {
+          comet.x = canvas.width;
+          comet.y = Math.random() * canvas.height;
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      drawNebulas();
+      drawStars();
+      drawPlanets();
+      drawComets();
+      requestAnimationFrame(animate);
+    }
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initStars();
+      initNebulas();
+      initPlanets();
+      initComets();
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+
+    resizeCanvas();
+    animate();
+  </script>
+
+</body>
+</html>
